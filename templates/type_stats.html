@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Statistiques des Types de Pokémon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Statistiques des Types de Pokémon</h1>
+
+        <div class="row">
+            {% for type_name, stats in type_stats.items() %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-capitalize">{{ type_name }} {{ type_emojis[type_name] }}</h5>
+                        {% if stats %}
+                        <p class="card-text">Nombre de Pokémon : {{ stats.count }}</p>
+                        <p class="card-text">Moyenne des PV : {{ stats.avg_hp }}</p>
+                        <canvas id="chart-{{ type_name }}"></canvas>
+                        {% else %}
+                        <p class="card-text">Aucun Pokémon trouvé pour ce type.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeEmojis = {
+                "fire": "🔥",
+                "water": "💧",
+                "grass": "🌿",
+                "electric": "⚡",
+                "ice": "❄️",
+                "fighting": "🥊",
+                "poison": "☠️",
+                "ground": "🌍",
+                "flying": "🕊️",
+                "psychic": "🔮",
+                "bug": "🐛",
+                "rock": "🪨",
+                "ghost": "👻",
+                "dragon": "🐉",
+                "dark": "🌑",
+                "steel": "🔩",
+                "fairy": "🧚"
+            };
+
+            {% for type_name, stats in type_stats.items() %}
+            {% if stats %}
+            var ctx = document.getElementById('chart-{{ type_name }}').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Nombre de Pokémon', 'Moyenne des PV'],
+                    datasets: [{
+                        label: '{{ type_name }} ' + typeEmojis['{{ type_name }}'],
+                        data: [{{ stats.count }}, {{ stats.avg_hp }}],
+                        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            {% endif %}
+            {% endfor %}
+        });
+    </script>
+</body>
+
+</html>

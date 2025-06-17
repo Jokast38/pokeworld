@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PokéWorld</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Bienvenue dans le monde des Pokémon !</h1>
+
+        <!-- Affichage des messages flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-info text-center" role="alert">
+                    <ul class="list-unstyled">
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <h1 class="text-center">PokéWorld</h1>
+
+        <!-- Lien vers la page des statistiques des types -->
+        <div class="text-center mb-4">
+            <a href="{{ url_for('type_stats') }}" class="btn btn-secondary">Voir les statistiques des types de Pokémon</a>
+        </div>
+
+        <!-- Recherche d'un Pokémon -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center">Rechercher un Pokémon</h2>
+                <form method="POST">
+                    <div class="mb-3 text-center">
+                        <label for="pokemon_name" class="form-label">Nom du Pokémon :</label>
+                        <input type="text" id="pokemon_name" name="pokemon_name" class="form-control mx-auto" placeholder="Nom ou ID du Pokémon" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Chercher</button>
+                </form>
+            </div>
+        </div>
+
+        {% if pokemon %}
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card pokemon-card text-center">
+                    <h3 class="card-title">{{ pokemon.name }}</h3>
+                    <img src="{{ pokemon.sprite }}" class="card-img-top" alt="Image de {{ pokemon.name }}" loading="lazy">
+                    <div class="card-body">
+                        <p class="card-text">💖 PV : {{ pokemon.hp }}</p>
+                        <p class="card-text">⚔️ Attaque : {{ pokemon.attack }}</p>
+                        <p class="card-text">🛡️ Défense : {{ pokemon.defense }}</p>
+                        <p class="card-text">🔥 Types : {{ ", ".join(pokemon.types) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- pokedex -->
+        <div class="container mt-5">
+            <h2 class="text-center">Liste des Pokémon</h2>
+
+            <table class="table table-striped text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Image</th>
+                        <th>Nom</th>
+                        <th>PV</th>
+                        <th>Attaque</th>
+                        <th>Défense</th>
+                        <th>Type(s)</th>
+                        <th>Détails</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pokemon in pokemons %}
+                    <tr>
+                        <td><img src="{{ pokemon.sprite }}" alt="{{ pokemon.name }}" class="pokemon-img" loading="lazy"></td>
+                        <td>{{ pokemon.name }}</td>
+                        <td>{{ pokemon.hp }}</td>
+                        <td>{{ pokemon.attack }}</td>
+                        <td>{{ pokemon.defense }}</td>
+                        <td>{{ ", ".join(pokemon.types) }}</td>
+                        <td><a href="{{ url_for('pokemon_details', name=pokemon.name) }}" class="btn btn-info">Voir</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('home', page=page-1) }}">Précédent</a>
+                    </li>
+                    {% endif %}
+                    {% for p in range(1, total_pages + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('home', page=p) }}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('home', page=page+1) }}">Suivant</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <!-- fin-pokedex -->
+
+        <!-- Recherche par type -->
+        <div class="text-center mt-4">
+            <h2>Statistiques des Pokémon d'un type</h2>
+            <form method="POST">
+                <input type="text" name="pokemon_type" class="form-control mx-auto" placeholder="Type (fire, water, grass...)" required>
+                <button type="submit" class="btn btn-primary mt-2">Rechercher</button>
+            </form>
+
+            {% if type_info %}
+            <h3>Type: {{ request.form['pokemon_type'].capitalize() }}</h3>
+            <p>Nombre de Pokémon : {{ type_info.count }}</p>
+            <p>Moyenne des PV : {{ type_info.avg_hp }}</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(function() {
+            var suggestions = {{ suggestions|tojson }};
+            $("#pokemon_name").autocomplete({
+                source: suggestions,
+                minLength: 2
+            });
+        });
+    </script>
+</body>
+
+</html>

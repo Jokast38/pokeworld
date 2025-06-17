@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ pokemon.name }} - Détails</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="container mt-5 text-center">
+        <h1>{{ pokemon.name }}</h1>
+        <img src="{{ pokemon.sprite }}" alt="Image de {{ pokemon.name }}" class="img-fluid">
+        
+        <h3>Informations :</h3>
+        <ul class="list-group mx-auto" style="max-width: 400px;">
+            <li class="list-group-item"><strong>💖 PV :</strong> {{ pokemon.hp }}</li>
+            <li class="list-group-item"><strong>⚔️ Attaque :</strong> {{ pokemon.attack }}</li>
+            <li class="list-group-item"><strong>🛡️ Défense :</strong> {{ pokemon.defense }}</li>
+            <li class="list-group-item"><strong>🔥 Type(s) :</strong> {{ ", ".join(pokemon.types) }}</li>
+            <li class="list-group-item"><strong📏 Taille :</strong> {{ pokemon.height }}</li>
+            <li class="list-group-item"><strong⚖️ Poids :</strong> {{ pokemon.weight }}</li>
+            <li class="list-group-item"><strong>✨ Capacités :</strong> {{ ", ".join(pokemon.abilities) }}</li>
+        </ul>
+
+        <a href="{{ url_for('home') }}" class="btn btn-primary mt-3">Retour au Pokédex</a>
+    </div>
+</body>
+</html>

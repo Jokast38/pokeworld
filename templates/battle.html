@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Combat Pokémon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <!-- Affichage des messages flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-info text-center" role="alert">
+                <ul class="list-unstyled">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Bataille Pokémon</h1>
+        <form method="POST">
+            <div class="mb-3">
+                <input type="text" name="pokemon1" class="form-control" placeholder="Nom du Pokémon 1" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" name="pokemon2" class="form-control" placeholder="Nom du Pokémon 2" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Lancer le combat</button>
+        </form>
+
+        {% if battle_result %}
+            <div class="mt-4">
+                <h2 class="text-center">Résultat du combat</h2>
+                <p class="text-center">🏆 Gagnant : {{ battle_result.winner }}</p>
+                <p class="text-center">PV restants : {{ request.form["pokemon1"] }} ({{ battle_result.p1_hp }}), {{ request.form["pokemon2"] }} ({{ battle_result.p2_hp }})</p>
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('home') }}" class="btn btn-primary">Retour au Pokédex</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
