@@ -94,6 +94,7 @@ Ouvre ton navigateur et commence l'aventure ! 🌍
 ---
 
 ## 🧑‍💻 Auteur
+Par Jokast Kassa 
 
 Projet de formation - Janvier 2025  
 Fais équipe et deviens le meilleur dresseur ! 🏆
